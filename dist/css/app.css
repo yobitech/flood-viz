@@ -1,0 +1,33 @@
+body {
+  /*padding-top: 50px;*/
+}
+/*#topbuttons {
+	padding: 40px 15px;
+}*/
+.starter-template {
+  padding: 10px 10px;
+  text-align: center;
+}
+
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+#map {
+	height: 500px;
+	width: 100%;
+	padding: 20px;
+}
+
+.hours-btn {
+	width: 70px;
+}
+
+.hours-btns {
+	margin-bottom: 10px;
+}
+
+.table {
+	margin-bottom: 0px;
+}
