@@ -8,7 +8,7 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="../../favicon.ico">
+    <!-- <link rel="icon" href="../../favicon.ico"> -->
 
     <title>Flooding Visualization</title>
 
@@ -138,33 +138,33 @@
 
             <div class="panel panel-default">
               <div class="panel-heading">
-                <h3 class="panel-title">Village: Dadenggre</h3>
+                <h3 class="panel-title" id='village-name'>Dadenggre</h3>
               </div>
               <div class="panel-body">
                 <table class='table'>
                   <tr>
                     <td>Chance of flood</td>
-                    <td>40%</td>
+                    <td id="flood-val">40%</td>
                   </tr>
                   <tr>
                     <td>Rainfall</td>
-                    <td>1.5 mm (50%)</td>
+                    <td id="rainfall-val">1.5 mm (50%)</td>
                   </tr>
                   <tr>
                     <td>Windspeed</td>
-                    <td>13 km/h</td>
+                    <td id="windspeed-val">13 km/h</td>
                   </tr>
                   <tr>
                     <td>Max Temp</td>
-                    <td>30 C</td>
+                    <td id='maxtemp-val'>30 C</td>
                   </tr>
                   <tr>
                     <td>Min Temp</td>
-                    <td>22 C</td>
+                    <td id='mintemp-val'>22 C</td>
                   </tr>
                   <tr>
                     <td>Humidity</td>
-                    <td>48%</td>
+                    <td id='humidity-val'>48%</td>
                   </tr>
                 </table>
               </div>
@@ -173,13 +173,14 @@
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h3 class="panel-title">
-                  <select class='form-control'>
+                  <select class='form-control' id='display-param'>
                     
                     <option value="">Rainfall</option>
                     <option value="">Temperature</option>
                     
                     <option value="">Wind speed</option>
                     <option value="">Solar radiation</option>
+                    <option value="">ET0</option>
                     <!-- <option value=""></option> -->
                   </select>
                 </h3>
@@ -192,7 +193,7 @@
                         <circle cx="10" cy="10" r="8" stroke="red" stroke-width="3" fill="red" />
                       </svg>
                     </td>
-                    <td>2.5+ mm</td>
+                    <td>Very high</td>
                   </tr>
                   <tr>
                     <td>
@@ -200,7 +201,7 @@
                         <circle cx="10" cy="10" r="8" stroke="orange" stroke-width="3" fill="orange" />
                       </svg>
                     </td>
-                    <td>2.0-2.5 mm</td>
+                    <td>High</td>
                   </tr>
                   <tr>
                     <td>
@@ -208,7 +209,7 @@
                         <circle cx="10" cy="10" r="8" stroke="yellow" stroke-width="3" fill="yellow" />
                       </svg>
                     </td>
-                    <td>1.5-2.0 mm</td>
+                    <td>Average</td>
                   </tr>
                   <tr>
                     <td>
@@ -216,7 +217,7 @@
                         <circle cx="10" cy="10" r="8" stroke="green" stroke-width="3" fill="green" />
                       </svg>
                     </td>
-                    <td>1.5- mm</td>
+                    <td>Low</td>
                   </tr>
                 </table>
               </div>
