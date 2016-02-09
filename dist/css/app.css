@@ -15,7 +15,7 @@ html, body {
 	padding: 0;
 }
 #map {
-	height: 500px;
+	height: 550px;
 	width: 100%;
 	padding: 20px;
 }
@@ -30,4 +30,8 @@ html, body {
 
 .table {
 	margin-bottom: 0px;
+}
+
+.viz-param {
+	text-align: center;
 }

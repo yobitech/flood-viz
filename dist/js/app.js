@@ -69,7 +69,7 @@ function circleColor(rainfall) {
 }
 
 function circleSize(rainfall) {
-	return Math.pow(10,3)*5
+	return Math.pow(10,3)*5;
 }
 
 function initMap() {
