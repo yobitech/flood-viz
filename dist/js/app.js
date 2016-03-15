@@ -8,6 +8,7 @@
 //   }
 
 var all_circles = [];
+var all_infos = [];
 var all_colors = ['red', 'orange', 'yellow', 'green'];
 
 var villages = {
@@ -85,15 +86,18 @@ function circleSize(rainfall) {
 	return Math.pow(10,3)*5;
 }
 
-function updateVillage(event) {
-	$('#village-name').text($(this)[0].data);
+function showVillageDetails(event) {
 
-	$('#flood-val').text(randint(0,100) + '%');
-	$('#rainfall-val').text(randrange(0,3,1) + ' mm ('+randint(0,100) + '%)');
-	$('#windspeed-val').text(randint(0,20) + ' km/h');
-	$('#maxtemp-val').text(randint(0,100) + ' C');
-	$('#mintemp-val').text(randint(0,100) + ' C');
-	$('#humidity-val').text(randint(0,100) + '%');
+
+
+	// $('#village-name').text($(this)[0].data);
+
+	// $('#flood-val').text(randint(0,100) + '%');
+	// $('#rainfall-val').text(randrange(0,3,1) + ' mm ('+randint(0,100) + '%)');
+	// $('#windspeed-val').text(randint(0,20) + ' km/h');
+	// $('#maxtemp-val').text(randint(0,100) + ' C');
+	// $('#mintemp-val').text(randint(0,100) + ' C');
+	// $('#humidity-val').text(randint(0,100) + '%');
 
 	// console.log(event);
 	// console.log($(this)[0].data);
@@ -107,6 +111,7 @@ function controlLine(ui, type, params) {
 	line.style.color = 'rgb(25,25,25)';
   line.style.fontFamily = 'Roboto,Arial,sans-serif';
   line.style.fontSize = '16px';
+  line.style.fontWeight = '300';
   line.style.lineHeight = (type == 'legendLine') ? '24px' : '38px';
   line.style.paddingLeft = (type == 'legendLine') ? '20px' : '10px';
   line.style.paddingRight = (type == 'legendLine') ? '20px' : '10px';
@@ -136,10 +141,12 @@ function controlTable(controlDiv, params) {
 	table.style.color = 'rgb(25,25,25)';
   table.style.fontFamily = 'Roboto,Arial,sans-serif';
   table.style.fontSize = '14px';
+  table.style.fontWeight = '300';
   table.style.paddingLeft = '10px';
   table.style.paddingRight = '10px';
   // table.style.paddingTop = '20px';
   table.style.paddingBottom = '10px';
+  table.style.textAlign = 'left';
 
 
 	for (var param of params) {
@@ -237,8 +244,29 @@ function initMap() {
 
   // Construct the circle for each value in citymap.
   // Note: We scale the area of the circle based on the population.
+  var index = 0
   for (var village in villages) {
+
   	var villageColor = circleColor(villages[village].rainfall);
+
+    var villageInfo = new google.maps.InfoWindow({
+    	content: '<div id="content">'
+    	+'<h3>' + village + '</h3>'
+    	+ '<i>Updated: 15/03/2016 at 10:56</i><br />'
+    	+ '<a href="#">Download data</a>'
+    	+ '<br /><br />'
+    		+ '<table>'
+    			+'<tr><td>Chance of flood</td><td>40%</td></tr>'
+    			+'<tr><td>Rainfall</td><td>1.5 mm (50%)</td></tr>'
+    			+'<tr><td>Windspeed</td><td>13 km/h</td></tr>'
+    			+'<tr><td>Max Temp</td><td>30 C</td></tr>'
+    			+'<tr><td>Min Temp</td><td>22 C</td></tr>'
+    			+'<tr><td>Humidity</td><td>48%</td></tr>'
+    		+ '</table>'
+    	+ '</div>'
+    });
+    all_infos.push(villageInfo);
+
     // Add the circle for this city to the map.
     var villageCircle = new google.maps.Circle({
       strokeColor: villageColor,
@@ -249,26 +277,36 @@ function initMap() {
       fillOpacity: 0.35,
       map: map,
       center: villages[village].center,
+      position: villages[village].center,
       radius: circleSize(villages[village].rainfall),
       data: village
       // raidius: 
       // radius: Math.sqrt(villages[village]*1000000) * 100
     });
-    villageCircle.addListener('click', updateVillage);
-    // all_circles.push({circle: villageCircle, village: village});
     all_circles.push(villageCircle);
-		// var marker = new google.maps.Marker({
-	 //    position: villages[village].center,
-	 //    map: map,
-	 //    title: 'Hello World!'
-	 //  });
+
+    // if (village == 'Dingok') {
+  	// villageCircle.addListener('click', function() {
+  	google.maps.event.addListener(all_circles[index], 'click', function(innerKey) {
+  		// console.log('derp');
+    	// console.log(i,e,h);
+    	// console.log(all_infos, this)
+    	return function() {
+    		all_infos[innerKey].open(map, all_circles[innerKey]);
+    	}
+    	// all_infos[all_infos.length-1].open(map, this);
+    }(index));
+    // }
+
+    index++;
+    
   }
   // Create the DIV to hold the control and call the CenterControl()
         // constructor passing in this DIV.
-	var downloadDiv = document.createElement('div');
-	var downloadControl = new createControl(downloadDiv, map, 'download', 'Download Data');
-	downloadDiv.index = 1;
-  map.controls[google.maps.ControlPosition.TOP_RIGHT].push(downloadDiv);
+	// var downloadDiv = document.createElement('div');
+	// var downloadControl = new createControl(downloadDiv, map, 'download', 'Download Data');
+	// downloadDiv.index = 1;
+ //  map.controls[google.maps.ControlPosition.TOP_RIGHT].push(downloadDiv);
 
   var legendDiv = document.createElement('div');
 	var legend = new createControl(legendDiv, map, 'legend', '');
@@ -285,10 +323,10 @@ function initMap() {
   measurementDiv.index = 1;
   map.controls[google.maps.ControlPosition.TOP_LEFT].push(measurementDiv);
 
-  var detailsDiv = document.createElement('div');
-  var detailControl = new createControl(detailsDiv, map, 'details', '');
-  detailsDiv.index = 1;
-  map.controls[google.maps.ControlPosition.RIGHT_CENTER].push(detailsDiv);
+  // var detailsDiv = document.createElement('div');
+  // var detailControl = new createControl(detailsDiv, map, 'details', '');
+  // detailsDiv.index = 1;
+  // map.controls[google.maps.ControlPosition.RIGHT_CENTER].push(detailsDiv);
 
   // map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('legend'));
 }
