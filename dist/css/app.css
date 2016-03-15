@@ -18,3 +18,10 @@ html, body {
 	font-size: 16px,
 	padding: 5px;
 }
+
+select {
+	border: none;
+	background-color: white;
+	font-size: 16px;
+	font-weight: 300;
+}

@@ -11,6 +11,14 @@ var all_circles = [];
 var all_infos = [];
 var all_colors = ['red', 'orange', 'yellow', 'green'];
 
+var legend_lines = {
+	temperature: ['> 40&#8451', '38-40&#8451', '36-38&#8451', '< 36&#8451'],
+	rainfall: ['> 10mm', '8-10mm', '6-8mm', '< 6mm'],
+	humidty: ['> 60%', '57.5-60%', '55-57.5%', '< 55%'],
+	flood: ['> 70%', '60-70%', '50-60%', '< 50%'],
+	windspeed: ['> 14 km/h', '12-14 km/h', '10-12 km/h', '< 10 km/h']
+}
+
 var villages = {
 
 	Dadenggre: {
@@ -115,7 +123,7 @@ function controlLine(ui, type, params) {
   line.style.lineHeight = (type == 'legendLine') ? '24px' : '38px';
   line.style.paddingLeft = (type == 'legendLine') ? '20px' : '10px';
   line.style.paddingRight = (type == 'legendLine') ? '20px' : '10px';
-  
+
   // line.style.paddingTop = '5px';
   // line.style.paddingBottom = '5px';
   if (type == 'legendLine') {
@@ -126,8 +134,14 @@ function controlLine(ui, type, params) {
 	  	line.style.paddingBottom = '10px';
 	  }
   	line.innerHTML = '<svg height="20" width="30"><circle cx="10" cy="10" r="8" stroke='
-  	+ params.color + ' stroke-width="3" fill=' + params.color + ' /></svg>' + params.text;
-
+  	+ params.color + ' stroke-width="2" fill=' + params.color 
+  	+ ' fill-opacity="0.35" stroke-opacity="0.8"/></svg>' + params.text;
+// strokeColor: villageColor,
+//       strokeOpacity: 0.8,
+//       strokeWeight: 2,
+//       fillColor: villageColor,
+//       // fillColor: circleColor(),
+//       fillOpacity: 0.35,
   }
   else {
   	line.innerHTML = params.text;
@@ -185,14 +199,22 @@ function createControl(controlDiv, map, controlType, text) {
 
   if (controlType == 'legend') {
 
-  	var legendLine1 = new controlLine(controlUI, 
-  		'legendLine', {'text': 'Very high', 'color': 'red'});
-  	var legendLine2 = new controlLine(controlUI, 
-  		'legendLine', {'text': 'High', 'color': 'orange'});
-  	var legendLine3 = new controlLine(controlUI, 
-  		'legendLine', {'text': 'Average', 'color': 'yellow'});
-  	var legendLine4 = new controlLine(controlUI, 
-  		'legendLine', {'text': 'Low', 'color': 'green'});
+  	controlUI.id = 'div-legend';
+
+  	for (var i=0; i < legend_lines['rainfall'].length; i++) {
+  		var line = legend_lines['rainfall'][i];
+  		var legendLine = new controlLine(controlUI, 
+  			'legendLine', {'text': line, 'color': all_colors[i]});
+		}
+
+  	// var legendLine1 = new controlLine(controlUI, 
+  	// 	'legendLine', {'text': 'Very high', 'color': 'red'});
+  	// var legendLine2 = new controlLine(controlUI, 
+  	// 	'legendLine', {'text': 'High', 'color': 'orange'});
+  	// var legendLine3 = new controlLine(controlUI, 
+  	// 	'legendLine', {'text': 'Average', 'color': 'yellow'});
+  	// var legendLine4 = new controlLine(controlUI, 
+  	// 	'legendLine', {'text': 'Low', 'color': 'green'});
 	  // var legendLine1 = new legendLine(controlUI, 'Very High', 'red');
 	  // var legendLine2 = new legendLine(controlUI, 'High', 'orange');
 	  // var legendLine3 = new legendLine(controlUI, 'Average', 'yellow');
@@ -212,6 +234,26 @@ function createControl(controlDiv, map, controlType, text) {
   	]);
   	// controlUI.appendChild(detailsTable);
 
+  }
+  else if (controlType == 'params') {
+  	var generalLine = new controlLine(controlUI, 'general', 
+  		{'text': '<select id="select-hours">'
+  			+ '<option value="24">24 hours</option>'
+  			+ '<option value="48">48 hours</option>'
+  			+ '<option value="72">72 hours</option>' 
+  			+ '</select>'
+  		});
+  }
+  else if (controlType == 'measurement') {
+  	var generalLine = new controlLine(controlUI, 'general', 
+  		{'text': '<select id="select-measurement">'
+  			+ '<option value="rainfall">Rainfall</option>'
+  			+ '<option value="temperature">Temperature</option>'
+  			+ '<option value="windspeed">Windspeed</option>' 
+  			+ '<option value="flood">Chance of flood</option>' 
+  			+ '<option value="humidty">Humidity</option>' 
+  			+ '</select>'
+  		});
   }
   else {
 
@@ -251,16 +293,17 @@ function initMap() {
 
     var villageInfo = new google.maps.InfoWindow({
     	content: '<div id="content">'
-    	+'<h3>' + village + '</h3>'
-    	+ '<i>Updated: 15/03/2016 at 10:56</i><br />'
-    	+ '<a href="#">Download data</a>'
+    	+'<h3>' + village + '&nbsp<a href="#">' 
+    	+ '<img width="15px" padding-left="10px" src="dist/img/download.svg"></a></h3>'
+    	+ '<i>Updated: 15/03/2016 at 10:56</i>'
+    	// + '<a href="#">Download data</a>'
     	+ '<br /><br />'
     		+ '<table>'
     			+'<tr><td>Chance of flood</td><td>40%</td></tr>'
     			+'<tr><td>Rainfall</td><td>1.5 mm (50%)</td></tr>'
     			+'<tr><td>Windspeed</td><td>13 km/h</td></tr>'
-    			+'<tr><td>Max Temp</td><td>30 C</td></tr>'
-    			+'<tr><td>Min Temp</td><td>22 C</td></tr>'
+    			+'<tr><td>Max temp</td><td>30 &#8451</td></tr>'
+    			+'<tr><td>Min temp</td><td>22 &#8451</td></tr>'
     			+'<tr><td>Humidity</td><td>48%</td></tr>'
     		+ '</table>'
     	+ '</div>'
@@ -323,6 +366,8 @@ function initMap() {
   measurementDiv.index = 1;
   map.controls[google.maps.ControlPosition.TOP_LEFT].push(measurementDiv);
 
+  // $('#display-param').change(function() {
+
   // var detailsDiv = document.createElement('div');
   // var detailControl = new createControl(detailsDiv, map, 'details', '');
   // detailsDiv.index = 1;
@@ -331,8 +376,38 @@ function initMap() {
   // map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('legend'));
 }
 
-$('#display-param').change(function() {
-	for (circle of all_circles) {
-		circle.setOptions({fillColor: circleColor(0)});
-	}
-})
+setTimeout(function() {
+
+	$('#select-measurement').change(function() {
+		// console.log('changed');
+		for (circle of all_circles) {
+			var color = circleColor(0);
+			circle.setOptions({fillColor: color, strokeColor: color});
+		}
+		// change the loaded thing
+		// console.log($(this).val());
+		var measurement = $(this).val();
+		$('#div-legend').empty();
+
+		var controlUI = document.getElementById('div-legend');
+
+  	for (var i=0; i < legend_lines[measurement].length; i++) {
+  		var line = legend_lines[measurement][i];
+  		var legendLine = new controlLine(controlUI, 
+  			'legendLine', {'text': line, 'color': all_colors[i]});
+		}
+
+	})
+
+	$('#select-hours').change(function() {
+		// console.log('changed hours');
+		for (circle of all_circles) {
+			var color = circleColor(0);
+			circle.setOptions({fillColor: color, strokeColor: color});
+		}
+	})
+
+}, 2000);
+
+
+
