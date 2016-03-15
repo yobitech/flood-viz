@@ -115,7 +115,7 @@ function controlLine(ui, type, params) {
   line.style.lineHeight = (type == 'legendLine') ? '24px' : '38px';
   line.style.paddingLeft = (type == 'legendLine') ? '20px' : '10px';
   line.style.paddingRight = (type == 'legendLine') ? '20px' : '10px';
-  
+
   // line.style.paddingTop = '5px';
   // line.style.paddingBottom = '5px';
   if (type == 'legendLine') {
@@ -126,8 +126,14 @@ function controlLine(ui, type, params) {
 	  	line.style.paddingBottom = '10px';
 	  }
   	line.innerHTML = '<svg height="20" width="30"><circle cx="10" cy="10" r="8" stroke='
-  	+ params.color + ' stroke-width="3" fill=' + params.color + ' /></svg>' + params.text;
-
+  	+ params.color + ' stroke-width="2" fill=' + params.color 
+  	+ ' fill-opacity="0.35" stroke-opacity="0.8"/></svg>' + params.text;
+// strokeColor: villageColor,
+//       strokeOpacity: 0.8,
+//       strokeWeight: 2,
+//       fillColor: villageColor,
+//       // fillColor: circleColor(),
+//       fillOpacity: 0.35,
   }
   else {
   	line.innerHTML = params.text;
@@ -213,6 +219,26 @@ function createControl(controlDiv, map, controlType, text) {
   	// controlUI.appendChild(detailsTable);
 
   }
+  else if (controlType == 'params') {
+  	var generalLine = new controlLine(controlUI, 'general', 
+  		{'text': '<select id="select-hours">'
+  			+ '<option value="24">24 hours</option>'
+  			+ '<option value="48">48 hours</option>'
+  			+ '<option value="72">72 hours</option>' 
+  			+ '</select>'
+  		});
+  }
+  else if (controlType == 'measurement') {
+  	var generalLine = new controlLine(controlUI, 'general', 
+  		{'text': '<select id="select-measurement">'
+  			+ '<option value="rainfall">Rainfall</option>'
+  			+ '<option value="temperature">Temperature</option>'
+  			+ '<option value="windspeed">Windspeed</option>' 
+  			+ '<option value="solar_radiation">Solar radiation</option>' 
+  			+ '<option value="et0">ET<sub>0</sub></option>' 
+  			+ '</select>'
+  		});
+  }
   else {
 
   	var generalLine = new controlLine(controlUI, 'general', {'text': text});
@@ -259,8 +285,8 @@ function initMap() {
     			+'<tr><td>Chance of flood</td><td>40%</td></tr>'
     			+'<tr><td>Rainfall</td><td>1.5 mm (50%)</td></tr>'
     			+'<tr><td>Windspeed</td><td>13 km/h</td></tr>'
-    			+'<tr><td>Max Temp</td><td>30 C</td></tr>'
-    			+'<tr><td>Min Temp</td><td>22 C</td></tr>'
+    			+'<tr><td>Max temp</td><td>30 &#8451</td></tr>'
+    			+'<tr><td>Min temp</td><td>22 &#8451</td></tr>'
     			+'<tr><td>Humidity</td><td>48%</td></tr>'
     		+ '</table>'
     	+ '</div>'
@@ -323,6 +349,8 @@ function initMap() {
   measurementDiv.index = 1;
   map.controls[google.maps.ControlPosition.TOP_LEFT].push(measurementDiv);
 
+  // $('#display-param').change(function() {
+
   // var detailsDiv = document.createElement('div');
   // var detailControl = new createControl(detailsDiv, map, 'details', '');
   // detailsDiv.index = 1;
@@ -331,8 +359,19 @@ function initMap() {
   // map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('legend'));
 }
 
-$('#display-param').change(function() {
+$('#select-measurement').change(function() {
+		console.log('changed');
+		for (circle of all_circles) {
+			var color = circleColor(0);
+			circle.setOptions({fillColor: color, strokeColor: color});
+		}
+	})
+
+$('#select-hours').change(function() {
+	console.log('changed hours');
 	for (circle of all_circles) {
-		circle.setOptions({fillColor: circleColor(0)});
+		var color = circleColor(0);
+		circle.setOptions({fillColor: color, strokeColor: color});
 	}
 })
+
