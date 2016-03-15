@@ -293,9 +293,10 @@ function initMap() {
 
     var villageInfo = new google.maps.InfoWindow({
     	content: '<div id="content">'
-    	+'<h3>' + village + '</h3>'
-    	+ '<i>Updated: 15/03/2016 at 10:56</i><br />'
-    	+ '<a href="#">Download data</a>'
+    	+'<h3>' + village + '&nbsp<a href="#">' 
+    	+ '<img width="15px" padding-left="10px" src="dist/img/download.svg"></a></h3>'
+    	+ '<i>Updated: 15/03/2016 at 10:56</i>'
+    	// + '<a href="#">Download data</a>'
     	+ '<br /><br />'
     		+ '<table>'
     			+'<tr><td>Chance of flood</td><td>40%</td></tr>'
