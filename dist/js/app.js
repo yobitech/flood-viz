@@ -19,36 +19,118 @@ var legend_lines = {
 	windspeed: ['> 14 km/h', '12-14 km/h', '10-12 km/h', '< 10 km/h']
 }
 
-var villages = {
+var villages = [
 
-	Dadenggre: {
-		center: {lat: 25.721316, lng: 90.194303},
-		rainfall: 1.5
-	},
-	Rongram: {
-		center: {lat: 25.593040, lng: 90.263311},
-		rainfall: 2.0
-	},
-	Hatsingimari: {
-		center: {lat: 25.711882, lng: 89.898015},
-		rainfall: 1.2
-	},
-	Jongchipara: {
-		center: {lat: 25.875096, lng: 90.318242},
-		rainfall: 0.9
-	},
-	Tikrikilla: {
-		center: {lat: 25.917099, lng: 90.149328},
-		rainfall: 1.8
-	},
-	Mankachar: {
-		center: {lat: 25.538532, lng: 89.858190},
-		rainfall: 1.7
-	},
-	Dingok: {
-		center: {lat: 25.873860, lng: 90.483037},
-		rainfall: 2.5
-	}
+  {
+    'last_update': '',
+    'id': 'ws0',
+    'village_name': '',
+    'air_temp': 35.5,
+    'humidity': 20,
+    'windspeed': 0,
+    'rainfall': 0,
+    'air_pressure': 0, 
+    'solar_radiation': 8,
+    'latitude': 25.57100,
+    'longitude': 91.89200
+  },
+
+
+  {
+    'last_update': '',
+    'id': 'ws1',
+    'village_name': '',
+    'air_temp': 34.5,
+    'humidity': 20,
+    'windspeed': 0,
+    'rainfall': 0,
+    'air_pressure': 0, 
+    'solar_radiation': 8,
+    'latitude': 25.57800,
+    'longitude': 91.89000
+  },
+
+
+  {
+    'last_update': '',
+    'id': 'ws2',
+    'village_name': '',
+    'air_temp': 36.5,
+    'humidity': 20,
+    'windspeed': 0,
+    'rainfall': 0,
+    'air_pressure': 0, 
+    'solar_radiation': 8,
+    'latitude': 25.57500,
+    'longitude': 91.89700
+  },
+
+
+  {
+    'last_update': '',
+    'id': 'ws3',
+    'village_name': '',
+    'air_temp': 33.5,
+    'humidity': 20,
+    'windspeed': 0,
+    'rainfall': 0,
+    'air_pressure': 0, 
+    'solar_radiation': 8,
+    'latitude': 25.53000,
+    'longitude': 91.90000
+  },
+
+
+  {
+    'last_update': '',
+    'id': 'ws4',
+    'village_name': '',
+    'air_temp': 34,
+    'humidity': 20,
+    'windspeed': 0,
+    'rainfall': 0,
+    'air_pressure': 0, 
+    'solar_radiation': 8,
+    'latitude': 25.60000,
+    'longitude': 91.90000
+  },
+
+  
+
+]
+
+// var villages = {
+
+
+
+	// Dadenggre: {
+	// 	center: {lat: 25.721316, lng: 90.194303},
+	// 	rainfall: 1.5
+	// },
+	// Rongram: {
+	// 	center: {lat: 25.593040, lng: 90.263311},
+	// 	rainfall: 2.0
+	// },
+	// Hatsingimari: {
+	// 	center: {lat: 25.711882, lng: 89.898015},
+	// 	rainfall: 1.2
+	// },
+	// Jongchipara: {
+	// 	center: {lat: 25.875096, lng: 90.318242},
+	// 	rainfall: 0.9
+	// },
+	// Tikrikilla: {
+	// 	center: {lat: 25.917099, lng: 90.149328},
+	// 	rainfall: 1.8
+	// },
+	// Mankachar: {
+	// 	center: {lat: 25.538532, lng: 89.858190},
+	// 	rainfall: 1.7
+	// },
+	// Dingok: {
+	// 	center: {lat: 25.873860, lng: 90.483037},
+	// 	rainfall: 2.5
+	// }
 
   // chicago: {
   //   center: {lat: 41.878, lng: -87.629},
@@ -66,7 +148,7 @@ var villages = {
   //   center: {lat: 49.25, lng: -123.1},
   //   population: 603502
   // }
-};
+// };
 
 function circleColor(rainfall) {
 	return all_colors[Math.floor(Math.random() * all_colors.length)];
@@ -91,7 +173,8 @@ function randint(min, max) {
 }
 
 function circleSize(rainfall) {
-	return Math.pow(10,3)*5;
+	// return Math.pow(10,3)*5;
+  return 1000;
 }
 
 function showVillageDetails(event) {
@@ -267,11 +350,34 @@ function createControl(controlDiv, map, controlType, text) {
   });
 }
 
+function getCenter(villages) {
+
+  var sum_lat = 0.;
+  var sum_lng = 0.;
+
+  for (var v in villages) {
+    village = villages[v];
+    sum_lat += village.latitude;
+    sum_lng += village.longitude;
+  }
+
+  return {
+    'lat': sum_lat/villages.length, 
+    'lng': sum_lng/villages.length
+  }
+
+}
+
 function initMap() {
+  // get map center
+  var map_center = getCenter(villages);
+
   // Create the map.
   var map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 10,
-    center: {lat: 25.721316, lng: 90.194303},
+    // zoom: 10,
+    zoom: 13,
+    // center: {lat: 25.721316, lng: 90.194303},
+    center: map_center,
     mapTypeId: google.maps.MapTypeId.TERRAIN,
     mapTypeControl: false,
 	  zoomControl: true,
@@ -287,24 +393,32 @@ function initMap() {
   // Construct the circle for each value in citymap.
   // Note: We scale the area of the circle based on the population.
   var index = 0
-  for (var village in villages) {
+  for (var v in villages) {
 
-  	var villageColor = circleColor(villages[village].rainfall);
+    var village = villages[v]
+
+  	var villageColor = circleColor(village.rainfall);
 
     var villageInfo = new google.maps.InfoWindow({
     	content: '<div id="content">'
-    	+'<h3>' + village + '&nbsp<a href="#">' 
+    	+'<h3>' + village.village_name + '&nbsp<a href="#">' 
     	+ '<img width="15px" padding-left="10px" src="dist/img/download.svg"></a></h3>'
-    	+ '<i>Updated: 15/03/2016 at 10:56</i>'
+    	+ '<i>Updated:'+village.last_update+'</i>'
     	// + '<a href="#">Download data</a>'
     	+ '<br /><br />'
     		+ '<table>'
-    			+'<tr><td>Chance of flood</td><td>40%</td></tr>'
-    			+'<tr><td>Rainfall</td><td>1.5 mm (50%)</td></tr>'
-    			+'<tr><td>Windspeed</td><td>13 km/h</td></tr>'
-    			+'<tr><td>Max temp</td><td>30 &#8451</td></tr>'
-    			+'<tr><td>Min temp</td><td>22 &#8451</td></tr>'
-    			+'<tr><td>Humidity</td><td>48%</td></tr>'
+          +'<tr><td>Air Temperature</td><td>'+village.air_temp+'</td></tr>'
+          +'<tr><td>Humidity</td><td>'+village.humidity+'</td></tr>'
+          +'<tr><td>Windspeed</td><td>'+village.windspeed+'</td></tr>'
+          +'<tr><td>Rainfall</td><td>'+village.rainfall+'</td></tr>'
+          +'<tr><td>Air Pressure</td><td>'+village.air_pressure+'</td></tr>'
+          +'<tr><td>Solar radiation</td><td>'+village.solar_radiation+'</td></tr>'
+    			// +'<tr><td>Chance of flood</td><td>40%</td></tr>'
+    			// +'<tr><td>Rainfall</td><td>1.5 mm (50%)</td></tr>'
+    			// +'<tr><td>Windspeed</td><td>13 km/h</td></tr>'
+    			// +'<tr><td>Max temp</td><td>30 &#8451</td></tr>'
+    			// +'<tr><td>Min temp</td><td>22 &#8451</td></tr>'
+    			// +'<tr><td>Humidity</td><td>48%</td></tr>'
     		+ '</table>'
     	+ '</div>'
     });
@@ -319,9 +433,9 @@ function initMap() {
       // fillColor: circleColor(),
       fillOpacity: 0.35,
       map: map,
-      center: villages[village].center,
-      position: villages[village].center,
-      radius: circleSize(villages[village].rainfall),
+      center: {'lat': village.latitude, 'lng': village.longitude},
+      position: {'lat': village.latitude, 'lng': village.longitude},
+      radius: circleSize(village.rainfall),
       data: village
       // raidius: 
       // radius: Math.sqrt(villages[village]*1000000) * 100
